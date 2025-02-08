@@ -82,15 +82,6 @@ export default function Page() {
           ),
         }}
       />
-      <Tab.Screen
-        name="Menu"
-        component={ForecastScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="menu" size={size} color={color} />
-          ),
-        }}
-      />
     </Tab.Navigator>
   );
 }

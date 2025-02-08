@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import axios from "axios";
 import ForecastDayCard from "./ForecastDayCard";
 
 const Forecast = () => {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
   const API_KEY = "4d2A6hwuqX3D9enqjlZlwRjXACTgnDLM";
-  const LOCATION = "55.6761,12.5683"; // Frederiksberg, Denmark (Lat, Lon)
+  const LOCATION = "55.6761,12.5683";
   const BASE_URL = "https://api.tomorrow.io/v4/timelines";
 
   useEffect(() => {
@@ -17,14 +24,30 @@ const Forecast = () => {
         const response = await axios.get(BASE_URL, {
           params: {
             location: LOCATION,
-            fields: ["temperature", "precipitationType", "windSpeed"],
+            fields: [
+              "temperature",
+              "precipitationType",
+              "precipitationIntensity",
+              "windSpeed",
+              "weatherCode",
+            ],
             timesteps: "1h",
             units: "metric",
             apikey: API_KEY,
           },
         });
+        console.log(response);
 
-        setWeather(response.data);
+        const rawData = response.data?.data?.timelines?.[0]?.intervals || [];
+        const groupedData: Record<string, any[]> = {};
+
+        rawData.forEach((entry: any) => {
+          const dateKey = entry.startTime.split("T")[0];
+          if (!groupedData[dateKey]) groupedData[dateKey] = [];
+          groupedData[dateKey].push(entry);
+        });
+
+        setWeather(groupedData);
       } catch (error) {
         console.error("Error fetching weather:", error);
       } finally {
@@ -35,10 +58,8 @@ const Forecast = () => {
     fetchWeather();
   }, []);
 
-  //   if (loading) return <ActivityIndicator size="large" color="blue" />;
-  //   if (!weather) return <Text>Error fetching weather data.</Text>;
-
-  const days = weather?.data?.timelines?.[0]?.intervals;
+  if (loading) return <ActivityIndicator size="large" color="blue" />;
+  if (!weather) return <Text>Error fetching weather data.</Text>;
 
   const dummyDays = [
     {
@@ -91,18 +112,24 @@ const Forecast = () => {
     },
   ];
 
+  console.log(weather);
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Text className="text-2xl font-bold pt-14 text-center">
-        Tomorrow.io Weather
+        5 Day Forecast
       </Text>
-      {days?.map((day, index) => {
-        return (
-          <View key={index}>
-            <ForecastDayCard day={day} />;
-          </View>
-        );
-      })}
+      {Object.entries(weather).map(([date, dayData]) => (
+        <TouchableOpacity
+          key={date}
+          onPress={() => setExpandedDay(expandedDay === date ? null : date)}
+        >
+          <ForecastDayCard
+            date={date}
+            dayData={dayData}
+            expanded={expandedDay === date}
+          />
+        </TouchableOpacity>
+      ))}
     </ScrollView>
   );
 };
