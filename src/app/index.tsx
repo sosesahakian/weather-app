@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { View, ImageBackground } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Home from "./Home";
 import Forecast from "./Forecast";
-
+import Other from "./Other";
 const Tab = createBottomTabNavigator();
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 function BackgroundWrapper({ children }) {
   return (
     <ImageBackground
-      source={require("../assets/images/lightning.jpg")}
+      source={require("../assets/images/clouds.jpg")}
       style={{ flex: 1, width: "100%", height: "100%" }}
       resizeMode="cover"
     >
@@ -34,6 +35,15 @@ function ForecastScreen() {
     <BackgroundWrapper>
       <View className="flex-1 justify-center items-center">
         <Forecast />
+      </View>
+    </BackgroundWrapper>
+  );
+}
+function OtherScreen() {
+  return (
+    <BackgroundWrapper>
+      <View className="flex-1 justify-center items-center">
+        <Other />
       </View>
     </BackgroundWrapper>
   );
@@ -69,16 +79,20 @@ export default function Page() {
         component={ForecastScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+            <FontAwesome name="line-chart" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="Dude"
-        component={ForecastScreen}
+        name="Other"
+        component={OtherScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="body" size={size} color={color} />
+            <MaterialCommunityIcons
+              name="weather-partly-snowy-rainy"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />

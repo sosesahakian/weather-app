@@ -87,31 +87,32 @@ const Home = () => {
   const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
 
   return (
-    <View className="justify-end p-4">
-      <View className="flex-row items-center gap-2">
-        <View className="flex-row p-2 align-middle justify-center items-center">
-          <Text className="text-4xl">{weather?.name}</Text>
-        </View>
+    <View className="flex-1 mb-20">
+      <View className="absolute top-0 left-0 p-4 pt-14 z-10 pl-24 flex-row items-center justify-between">
+        <Text className="text-4xl px-2">{weather?.name}</Text>
 
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <FontAwesome name="search" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
-      <View>
-        <Text className="text-6xl">{weather?.main?.temp.toFixed(1)}°C</Text>
-        <Text className="font-bold text-lg">
-          Feels Like: {weather?.main?.feels_like.toFixed(1)}°C
-        </Text>
-      </View>
+      <View className="pt-56 items-start gap-7">
+        <View className="flex-row justify-between gap-20">
+          <View>
+            <Text className="text-6xl">{weather?.main?.temp.toFixed(1)}°C</Text>
+            <Text className="font-bold text-lg">
+              Feels Like: {weather?.main?.feels_like.toFixed(1)}°C
+            </Text>
+          </View>
 
-      <View>
-        {iconCode && (
-          <Image
-            source={{ uri: iconUrl }}
-            style={{ width: 100, height: 100 }}
-          />
-        )}
+          {weather?.weather?.[0]?.icon && (
+            <Image
+              source={{ uri: iconUrl }}
+              style={{ width: 100, height: 100 }}
+            />
+          )}
+        </View>
+
         <Text>Wind Speed: {weather?.wind.speed} m/s</Text>
       </View>
 
@@ -124,7 +125,7 @@ const Home = () => {
         <View className="flex-1 justify-center items-center opacity-90">
           <View className="bg-white p-3 rounded-lg w-3/4 flex-row items-center justify-center gap-2">
             <TextInput
-              className="border-2 border-gray-300 p-3 w-60 rounded "
+              className="border-2 border-gray-300 p-3 w-60 "
               placeholder="City Name"
               value={city}
               onChangeText={setCity}
